@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprovação de Solicitação - Recursos Humanos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+
+    img {
+      max-width: 250px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #4CAF50;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #555;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .descricao {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #777;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 500px;
+      height: 120px;
+      padding: 10px;
+      margin-top: 15px;
+      margin-bottom: 30px;
+      resize: vertical;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 12px 30px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #aprovarBtn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #reprovarBtn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    #aprovarBtn:hover {
+      background-color: #45a049;
+    }
+
+    #reprovarBtn:hover {
+      background-color: #e53935;
+    }
+
+    #mensagem {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    .footer {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 40px;
+    }
+
+    .footer a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+  </style>
+  <script>
+    async function enviar(status) {
+      if (window.enviado) return;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      const observacao = document.getElementById('observacao').value.trim();
+
+      if (!id) {
+        document.getElementById('mensagem').innerHTML = "<h2>Erro: parâmetro 'id' é obrigatório.</h2>";
+        return;
+      }
+
+      if (!status) {
+        document.getElementById('mensagem').innerHTML = "<h2>Erro: parâmetro 'status' é obrigatório.</h2>";
+        return;
+      }
+
+      if (observacao === "") {
+        alert("Por favor, preencha o campo de observação antes de continuar.");
+        return;
+      }
+
+      window.enviado = true;
+
+      const payload = {
+        status: status,
+        id: id,
+        observacao: observacao
+      };
+
+      document.getElementById('mensagem').innerText = "Enviando solicitação...";
+      document.getElementById('aprovarBtn').style.display = "none";
+      document.getElementById('reprovarBtn').style.display = "none";
+      document.getElementById('observacao').disabled = true;
+
+      try {
+        const response = await fetch("https://defaultb90bdb96772a4c26a4e329ea54720a.43.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/90ea5f8b5b3d4097a4620802eee6f632/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=N9xiQc4vzUpDVLhCYPVx8yRhCiB5j-aXhXP3_rmoNO8", { 
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          document.getElementById('mensagem').innerHTML = "<h2>Solicitação enviada com sucesso ✅</h2>";
+        } else {
+          const err = await response.text();
+          document.getElementById('mensagem').innerHTML = `<h2>Erro ao enviar ❌</h2><pre>${err}</pre>`;
+        }
+      } catch (e) {
+        document.getElementById('mensagem').innerHTML = `<h2>Erro inesperado ❌</h2><pre>${e}</pre>`;
+      }
+    }
+  </script>
+</head>
+<body>
+  <img src="https://utilit.com.br/website/wp-content/uploads/2021/09/D_granel.png" alt="Logo D'Granel" />
+  <h1>Aprovação de Solicitação</h1>
+  <h2>Recursos Humanos - Aprovação de Aumento ou Substituição</h2>
+
+  <p class="descricao">O Gestor de Recursos Humanos deve aprovar ou reprovar a solicitação relacionada a um aumento de salário ou substituição de funcionário. Insira uma observação detalhada para justificar sua decisão.</p>
+
+  <textarea id="observacao" placeholder="Digite aqui sua observação..."></textarea><br/>
+
+  <button id="aprovarBtn" onclick="enviar('Aprovado')">Aprovar Solicitação</button>
+  <button id="reprovarBtn" onclick="enviar('Rejeitado')">Reprovar Solicitação</button>
+
+  <div id="mensagem"></div>
+
+  <div class="footer">
+    <p>Se precisar de ajuda, entre em contato com o suporte de <a href="mailto:support@empresa.com">suporte@empresa.com</a>.</p>
+  </div>
+</body>
+</html>
