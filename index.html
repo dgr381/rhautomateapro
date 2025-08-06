@@ -99,10 +99,16 @@
 
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
+      const setor = urlParams.get('setor'); // Pegando o parâmetro 'setor' da URL
       const observacao = document.getElementById('observacao').value.trim();
 
       if (!id) {
         document.getElementById('mensagem').innerHTML = "<h2>Erro: parâmetro 'id' é obrigatório.</h2>";
+        return;
+      }
+
+      if (!setor) {
+        document.getElementById('mensagem').innerHTML = "<h2>Erro: parâmetro 'setor' é obrigatório.</h2>";
         return;
       }
 
@@ -121,6 +127,7 @@
       const payload = {
         status: status,
         id: id,
+        setor: setor, // Enviando o setor junto com os outros dados
         observacao: observacao
       };
 
@@ -155,7 +162,7 @@
   <h1>Aprovação de Solicitação</h1>
   <h2>Recursos Humanos - Aprovação de Aumento ou Substituição</h2>
 
-  <p class="descricao">O Gestor de Recursos Humanos deve aprovar ou reprovar a solicitação relacionada a um aumento de salário ou substituição de funcionário. Insira uma observação detalhada para justificar sua decisão.</p>
+  <p class="descricao">O Gestor de Recursos Humanos deve aprovar ou reprovar a solicitação relacionada a um aumento de salário ou substituição de funcionário no setor <strong id="setorInfo"></strong>. Insira uma observação detalhada para justificar sua decisão.</p>
 
   <textarea id="observacao" placeholder="Digite aqui sua observação..."></textarea><br/>
 
@@ -167,5 +174,14 @@
   <div class="footer">
     <p>Se precisar de ajuda, entre em contato com o suporte de <a href="mailto:support@empresa.com">suporte@empresa.com</a>.</p>
   </div>
+
+  <script>
+    // Exibindo o nome do setor na página
+    const urlParams = new URLSearchParams(window.location.search);
+    const setor = urlParams.get('setor');
+    if (setor) {
+      document.getElementById('setorInfo').innerText = setor;
+    }
+  </script>
 </body>
 </html>
